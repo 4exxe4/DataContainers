@@ -30,9 +30,42 @@ public:
 
 	}
 	friend class ForwardList;
+	friend class Iterator;
 	friend ForwardList operator+(const ForwardList& left, const ForwardList& right);
 };
 int Element::count = 0;
+
+class Iterator
+{
+	Element* Temp;
+public:
+	Iterator(Element* Temp = nullptr) :Temp(Temp)
+	{
+		cout << "ItConstructor:\t" << this << endl;
+	}
+	~Iterator()
+	{
+		cout << "ItDestructor:\t" << this << endl;
+	}
+	Iterator& operator++()
+	{
+		Temp = Temp->pNext;
+		return *this;
+	}
+	bool operator == (const Iterator& other)const
+	{
+		return this->Temp == other.Temp;
+	}
+
+	bool operator != (const Iterator& other)const
+	{
+		return this->Temp != other.Temp;
+	}
+	int operator*()const
+	{
+		return Temp->Data;
+	}
+};
 
 class ForwardList
 {
@@ -47,6 +80,14 @@ public:
 	{
 		return size;
 	}
+	Iterator begin()
+	{
+		return head;
+	}
+	Iterator end()
+	{
+		return nullptr;
+	}
 	ForwardList()
 	{
 		//Конструктор по умолчанию - создает пустой список 
@@ -58,6 +99,20 @@ public:
 	{
 		while (size--)push_front(0);
 		cout << "FLSizeConstructor:\t" << this << endl;
+	}
+	ForwardList(const std::initializer_list<int>& il) :ForwardList()
+	{
+		//Initializer_list - это контейнер.
+		//Контейнер - это объект, который организует хранение других объектов в памяти
+		//Контейнеры как правило передаются в функцию по константной ссылке для экономии ресурсов.
+		//У любого контейнера есть метод begin(), который возвращает Итератор на начало контейнера,
+		//И метод end(), который возвращает итератор на конец контейнера
+		cout << typeid(il.begin()).name() << endl;
+		for (int const* it = il.begin(); it != il.end(); it++)
+		{
+			push_back(*it);
+		}
+		cout << "FLitConstructor:\t" << this << endl;
 	}
 	ForwardList(const ForwardList& other):ForwardList()
 	{
@@ -224,12 +279,26 @@ ForwardList operator+(const ForwardList& left, const ForwardList& right)
 	return fusion;
 }
 
+void Print(int arr[])
+{
+	cout << typeid(arr).name() << endl;
+	cout << sizeof(arr) / sizeof(arr[0]) << endl;
+	/*
+	for (int i : arr)
+	{
+		cout << i << tab;
+	}
+	cout << endl;
+	*/
+}
+
 //#define BASE_CHECK
 //#define OPERATOR_PLUS_CHECK
 //#define PERFORMANCE_CHECK
 //#define SUBSCRIPT_OPERATOR_CHECK
 //#define COPY_SEMANTIC_PERFORMANCE_CHECK
-#define MOVE_SEMANTIC_CHECK
+//#define MOVE_SEMANTIC_CHECK
+//#define RANGE_BASED_FOR_ARRAY
 
 void main()
 {
@@ -282,7 +351,7 @@ void main()
 	cout << delimiter << endl;
 	//fusion.print();
 	for (int i = 0; i < list3.get_size(); i++)cout << list3[i] << tab; cout << endl;
-	
+
 
 	/*
 	int index;
@@ -322,7 +391,7 @@ void main()
 	for (int i = 0; i < list.get_size(); i++)
 		list[i] = rand() % 100;
 	end = clock();
-	cout << "Список заполнен" <<double(end-start)/CLOCKS_PER_SEC << endl;
+	cout << "Список заполнен" << double(end - start) / CLOCKS_PER_SEC << endl;
 	system("PAUSE");
 	for (int i = 0; i < list.get_size(); i++)
 		cout << list[i] << tab;
@@ -339,7 +408,7 @@ void main()
 	ForwardList list1;
 	t_start = clock();
 	for (int i = 0; i < n; i++)
-		list1.push_front(rand()%100);
+		list1.push_front(rand() % 100);
 	t_end = clock();
 	cout << "Список заполнен за " << double(t_end - t_start) / CLOCKS_PER_SEC << " секунд " << endl;
 	system("PAUSE");
@@ -374,6 +443,29 @@ void main()
 	t_end = clock();
 	cout << "Lists copied for " << double(t_end - t_start) / CLOCKS_PER_SEC << " seconds" << endl;
 #endif // MOVE_SEMANTIC_CHECK
+
+#ifdef RANGE_BASED_FOR_ARRAY
+
+	int arr[] = { 3,5,8,13,21 };
+	for (int i = 0; i < sizeof(arr) / sizeof(arr[0]); i++)
+	{
+		cout << arr[i] << tab;
+	}
+	cout << endl;
+
+	//Range-based for - for для диапазона. Под диапазоном понимается контейнер (какой-то набор элементов)
+	for (int i : arr)
+	{
+		cout << i << tab;
+	}
+	cout << endl;
+	Print(arr);
+
+#endif // RANGE_BASED_FOR_ARRAY
+
+	ForwardList list = { 3,5,8,13,21 }; //Переечисление значений в фигурных скобках через запятую неявно создает объект класса 'initializer_list';
+	list.print();
+	for (int i : list)cout << i << tab; cout << endl;
 }
 
 /*
