@@ -435,7 +435,14 @@ void main()
 	}
 	cout << endl;
 #endif // HOME_WORK
-	
+	List<double> d_list = { 2.7, 3.14, 5.8, 8.3 };
+	for (double i : d_list)cout << i << tab; cout << endl;
+
+	List<std::string> s_list = { "Хорошо", "живет", "на", "свете", "Винни" , "Пух" };
+	for (std::string i : s_list) cout << i << tab; cout << endl;
+	for (List<std::string>::ReverseIterator it = s_list.rbegin(); it != s_list.rend(); ++it)
+		cout << *it << tab;
+	cout << endl;
 /*
 Шаблоны классов:
 
