@@ -1,20 +1,30 @@
-#include <iostream>
+п»ї#include <iostream>
+#include <string>
 using std::cin;
 using std::endl;
 using std::cout;
 
+
+
+/*
+Class - РѕР±СЂР°С‰РµРЅРёРµ Рє РѕР±С‹С‡РЅРѕРјСѓ РєР»Р°СЃСЃСѓ:
+Class<type> - РѕР±СЂР°С‰РµРЅРёРµ Рє С€Р°Р±Р»РѕРЅРЅРѕРјСѓ РєР»Р°СЃСЃСѓ. Type РѕРїСЂРµРґРµР»СЏРµС‚, РєР°РєРѕРіРѕ С‚РёРїР° Р±СѓРґСѓС‚ РїРѕР»СЏ СЃРѕР·РґР°РІР°РµРјРѕРіРѕ РѕР±СЉРµРєС‚Р°.
+*/
+
+
 #define tab "\t"
 #define delimeter "\n----------------------------------------\n"
 
+template <typename T>
 class List
 {
 	class Element
 	{
-		int Data;
+		T Data;
 		Element* pNext;
 		Element* pPrev;
 	public:
-		Element(int Data, Element* pnext = nullptr, Element* pPrev = nullptr)
+		Element(T Data, Element* pnext = nullptr, Element* pPrev = nullptr)
 			:Data(Data), pNext(pNext), pPrev(pPrev)
 		{
 			cout << "EConstructor\t" << this << endl;
@@ -24,9 +34,9 @@ class List
 			cout << "EDestructor:\t" << this << endl;
 		}
 		friend class List;
-	}*Head, *Tail; //Объекты классов и структур и указатели на эти объекты можно объявлять непосредственно после описания классов и структур
+	}*Head, *Tail; //РћР±СЉРµРєС‚С‹ РєР»Р°СЃСЃРѕРІ Рё СЃС‚СЂСѓРєС‚СѓСЂ Рё СѓРєР°Р·Р°С‚РµР»Рё РЅР° СЌС‚Рё РѕР±СЉРµРєС‚С‹ РјРѕР¶РЅРѕ РѕР±СЉСЏРІР»СЏС‚СЊ РЅРµРїРѕСЃСЂРµРґСЃС‚РІРµРЅРЅРѕ РїРѕСЃР»Рµ РѕРїРёСЃР°РЅРёСЏ РєР»Р°СЃСЃРѕРІ Рё СЃС‚СЂСѓРєС‚СѓСЂ
 
-	size_t size;   //Размер списка. size_t - это typedef на 'unsigned int.
+	size_t size;   //Р Р°Р·РјРµСЂ СЃРїРёСЃРєР°. size_t - СЌС‚Рѕ typedef РЅР° 'unsigned int.
 	class ConstBaseIterator
 	{
 	protected:
@@ -44,7 +54,7 @@ class List
 		{
 			return this->Temp != other.Temp;
 		}
-		int operator*()const
+		T operator*()const
 		{
 			return Temp->Data;
 		}
@@ -58,24 +68,24 @@ public:
 
 		ConstIterator& operator++()
 		{
-			Temp = Temp->pNext;
+			ConstBaseIterator::Temp = ConstBaseIterator::Temp->pNext;
 			return *this;
 		}
 		ConstIterator operator++(int)
 		{
 			ConstIterator old = *this;
-			Temp = Temp->pNext;
+			ConstBaseIterator::Temp = ConstBaseIterator::Temp->pNext;
 			return old;
 		}
 		ConstIterator& operator--()
 		{
-			Temp = Temp->pPrev;
+		ConstBaseIterator::Temp = ConstBaseIterator::Temp->pPrev;
 			return *this;
 		}
 		ConstIterator operator--(int)
 		{
 			ConstIterator old = *this;
-			Temp = Temp->pPrev;
+			ConstBaseIterator::Temp = ConstBaseIterator::Temp->pPrev;
 			return old;
 		}
 	};
@@ -88,24 +98,24 @@ public:
 		//				Increment/Decrement:
 		ConstReverseIterator& operator++()
 		{
-			Temp = Temp->pPrev;
+			ConstBaseIterator::Temp = ConstBaseIterator::Temp->pPrev;
 			return *this;
 		}
 		ConstReverseIterator operator++(int)
 		{
 			ConstReverseIterator old = *this;
-			Temp = Temp->pPrev;
+			ConstBaseIterator::Temp = ConstBaseIterator::Temp->pPrev;
 			return old;
 		}
 		ConstReverseIterator& operator--()
 		{
-			Temp = Temp->pNext;
+			ConstBaseIterator::Temp = ConstBaseIterator::Temp->pNext;
 			return *this;
 		}
 		ConstReverseIterator operator--(int)
 		{
 			ConstReverseIterator old = *this;
-			Temp = Temp->pNext;
+			ConstBaseIterator::Temp = ConstBaseIterator::Temp->pNext;
 			return old;
 		}
 	};
@@ -116,7 +126,7 @@ public:
 		~Iterator() {}
 		int& operator*()
 		{
-			return Temp->Data;
+			return ConstBaseIterator::Temp->Data;
 		}
 	};
 	class ReverseIterator :public ConstReverseIterator
@@ -124,9 +134,9 @@ public:
 	public:
 		ReverseIterator(Element* Temp) :ConstReverseIterator(Temp) {}
 		~ReverseIterator() {}
-		int& operator*()
+		T& operator*()
 		{
-			return Temp->Data;
+			return ConstBaseIterator::Temp->Data;
 		}
 	};
 	////////////////////////////////////////////////
@@ -168,15 +178,15 @@ public:
 		size = 0;
 		cout << "LConstructor\t" << this << endl;
 	}
-	List(const std::initializer_list<int>& il) :List()
+	List(const std::initializer_list<T>& il) :List()
 	{
-		for (int const* it = il.begin(); it != il.end(); ++it)
+		for (T const* it = il.begin(); it != il.end(); ++it)
 		{
 			push_back(*it);
 		}
 		cout << "ILConstructor:\t" << this << endl;
 	}
-	List(const List& other) :List()
+	List(const List<T>& other) :List()
 	{
 		*this = other;
 		cout << "LCopyConstructor:\t" << this << endl;
@@ -188,7 +198,7 @@ public:
 		cout << "LDestructor\t" << this << endl;
 	}
 	//Operators:
-	List& operator = (const List& other)
+	List<T> & operator = (const List<T>& other)
 	{
 		if (this == &other) return *this;
 		while (Head)pop_front();
@@ -199,9 +209,9 @@ public:
 	}
 
 	// Adding elements:
-	void push_front(int Data)
+	void push_front(T Data)
 	{
-		//1) Создаем элемент, в котором будет хранится добавляемое значение:
+		//1) РЎРѕР·РґР°РµРј СЌР»РµРјРµРЅС‚, РІ РєРѕС‚РѕСЂРѕРј Р±СѓРґРµС‚ С…СЂР°РЅРёС‚СЃСЏ РґРѕР±Р°РІР»СЏРµРјРѕРµ Р·РЅР°С‡РµРЅРёРµ:
 		Element* New = new Element(Data);
 
 		if (Head == nullptr && Tail == nullptr)
@@ -211,22 +221,22 @@ public:
 		else
 		{
 
-			//2) Пристыковываем новый элемент к списку:
+			//2) РџСЂРёСЃС‚С‹РєРѕРІС‹РІР°РµРј РЅРѕРІС‹Р№ СЌР»РµРјРµРЅС‚ Рє СЃРїРёСЃРєСѓ:
 			New->pNext = Head;
 
-			//3) Пристыковываем начальный элемент списка к новому элементу:
+			//3) РџСЂРёСЃС‚С‹РєРѕРІС‹РІР°РµРј РЅР°С‡Р°Р»СЊРЅС‹Р№ СЌР»РµРјРµРЅС‚ СЃРїРёСЃРєР° Рє РЅРѕРІРѕРјСѓ СЌР»РµРјРµРЅС‚Сѓ:
 			Head->pPrev = New;
 
-			//4) Делаем новый элемент начальным элементом списка:
+			//4) Р”РµР»Р°РµРј РЅРѕРІС‹Р№ СЌР»РµРјРµРЅС‚ РЅР°С‡Р°Р»СЊРЅС‹Рј СЌР»РµРјРµРЅС‚РѕРј СЃРїРёСЃРєР°:
 			Head = New;
 
 		}
 
 		size++;
 	}
-	void push_back(int Data)
+	void push_back(T Data)
 	{
-		//1) Создаем новый элемент:
+		//1) РЎРѕР·РґР°РµРј РЅРѕРІС‹Р№ СЌР»РµРјРµРЅС‚:
 		Element* New = new Element(Data);
 		if (Head == nullptr && Tail == nullptr)
 		{
@@ -234,24 +244,24 @@ public:
 		}
 		else
 		{
-			//2) Цепляем новый элемент за хвост списка:
+			//2) Р¦РµРїР»СЏРµРј РЅРѕРІС‹Р№ СЌР»РµРјРµРЅС‚ Р·Р° С…РІРѕСЃС‚ СЃРїРёСЃРєР°:
 			New->pPrev = Tail;
 
-			//3) Пристыковываем список к новому элементу:
+			//3) РџСЂРёСЃС‚С‹РєРѕРІС‹РІР°РµРј СЃРїРёСЃРѕРє Рє РЅРѕРІРѕРјСѓ СЌР»РµРјРµРЅС‚Сѓ:
 			Tail->pNext = New;
 
-			//4) Делаем новый элемент хвостом списка:
+			//4) Р”РµР»Р°РµРј РЅРѕРІС‹Р№ СЌР»РµРјРµРЅС‚ С…РІРѕСЃС‚РѕРј СЃРїРёСЃРєР°:
 			Tail = New;
 		}
 		size++;
 	}
 
-	void insert(int Data, int Index)
+	void insert(T Data, int Index)
 	{
 		if (Index < 0)return;
 		if (Index == 0 || size == 0)return push_front(Data);
 		if (Index >= size)return push_back(Data);
-		//1) Доходим до нужного элемента:
+		//1) Р”РѕС…РѕРґРёРј РґРѕ РЅСѓР¶РЅРѕРіРѕ СЌР»РµРјРµРЅС‚Р°:
 		Element* Temp;
 		if (Index < size / 2)
 		{
@@ -263,16 +273,16 @@ public:
 			Temp = Tail;
 			for (int i = 0; i < size - Index - 1; i++)Temp = Temp->pPrev;
 		}
-		// Независимо от того, каким образом мы дошли до нужного элемента, с начала списка или с конца списка, процедура добавления элемента будет идентичной:
+		// РќРµР·Р°РІРёСЃРёРјРѕ РѕС‚ С‚РѕРіРѕ, РєР°РєРёРј РѕР±СЂР°Р·РѕРј РјС‹ РґРѕС€Р»Рё РґРѕ РЅСѓР¶РЅРѕРіРѕ СЌР»РµРјРµРЅС‚Р°, СЃ РЅР°С‡Р°Р»Р° СЃРїРёСЃРєР° РёР»Рё СЃ РєРѕРЅС†Р° СЃРїРёСЃРєР°, РїСЂРѕС†РµРґСѓСЂР° РґРѕР±Р°РІР»РµРЅРёСЏ СЌР»РµРјРµРЅС‚Р° Р±СѓРґРµС‚ РёРґРµРЅС‚РёС‡РЅРѕР№:
 
-		//2) Создаем новый элемент:
+		//2) РЎРѕР·РґР°РµРј РЅРѕРІС‹Р№ СЌР»РµРјРµРЅС‚:
 		Element* New = new Element(Data);
 
-		//3) Пристыковываем новый элемент к списку:
+		//3) РџСЂРёСЃС‚С‹РєРѕРІС‹РІР°РµРј РЅРѕРІС‹Р№ СЌР»РµРјРµРЅС‚ Рє СЃРїРёСЃРєСѓ:
 		New->pNext = Temp;
 		New->pPrev = Temp->pPrev;
 
-		//4) Вклиниваем новый элемент в список:
+		//4) Р’РєР»РёРЅРёРІР°РµРј РЅРѕРІС‹Р№ СЌР»РµРјРµРЅС‚ РІ СЃРїРёСЃРѕРє:
 		Temp->pPrev->pNext = New;
 		Temp->pPrev = New;
 
@@ -282,24 +292,24 @@ public:
 	void pop_front()
 	{
 		if (Head == nullptr && Tail == nullptr)return;
-		if (Head == Tail) //Если голова и хвост равны, то они указывают либо на 0 либо на один и тот же элемент.
-			//Ситуацию с пустым список обрабатывает предыдущее условие.
-			//Ситуацию с выраженным списком обрабатывает текущее условие, и в этом if-е удаляется один едиственныи элемент списка
+		if (Head == Tail) //Р•СЃР»Рё РіРѕР»РѕРІР° Рё С…РІРѕСЃС‚ СЂР°РІРЅС‹, С‚Рѕ РѕРЅРё СѓРєР°Р·С‹РІР°СЋС‚ Р»РёР±Рѕ РЅР° 0 Р»РёР±Рѕ РЅР° РѕРґРёРЅ Рё С‚РѕС‚ Р¶Рµ СЌР»РµРјРµРЅС‚.
+			//РЎРёС‚СѓР°С†РёСЋ СЃ РїСѓСЃС‚С‹Рј СЃРїРёСЃРѕРє РѕР±СЂР°Р±Р°С‚С‹РІР°РµС‚ РїСЂРµРґС‹РґСѓС‰РµРµ СѓСЃР»РѕРІРёРµ.
+			//РЎРёС‚СѓР°С†РёСЋ СЃ РІС‹СЂР°Р¶РµРЅРЅС‹Рј СЃРїРёСЃРєРѕРј РѕР±СЂР°Р±Р°С‚С‹РІР°РµС‚ С‚РµРєСѓС‰РµРµ СѓСЃР»РѕРІРёРµ, Рё РІ СЌС‚РѕРј if-Рµ СѓРґР°Р»СЏРµС‚СЃСЏ РѕРґРёРЅ РµРґРёСЃС‚РІРµРЅРЅС‹Рё СЌР»РµРјРµРЅС‚ СЃРїРёСЃРєР°
 		{
 			delete Head;
 			Head = Tail = nullptr;
 		}
 		else
 		{
-			//Общмй случай:
+			//РћР±С‰РјР№ СЃР»СѓС‡Р°Р№:
 
-			//1) Смещаем голову на следующий элемент:
+			//1) РЎРјРµС‰Р°РµРј РіРѕР»РѕРІСѓ РЅР° СЃР»РµРґСѓСЋС‰РёР№ СЌР»РµРјРµРЅС‚:
 			Head = Head->pNext;
 
-			//2) Удаляем элемент из памяти:
+			//2) РЈРґР°Р»СЏРµРј СЌР»РµРјРµРЅС‚ РёР· РїР°РјСЏС‚Рё:
 			delete Head->pPrev;
 
-			//3) Обнуляем указатель на удаленный элемент (делаем Head последним элементом списка):
+			//3) РћР±РЅСѓР»СЏРµРј СѓРєР°Р·Р°С‚РµР»СЊ РЅР° СѓРґР°Р»РµРЅРЅС‹Р№ СЌР»РµРјРµРЅС‚ (РґРµР»Р°РµРј Head РїРѕСЃР»РµРґРЅРёРј СЌР»РµРјРµРЅС‚РѕРј СЃРїРёСЃРєР°):
 			Head->pPrev = nullptr;
 		}
 
@@ -332,7 +342,7 @@ public:
 		for (Element* Temp = Head; Temp; Temp = Temp->pNext)
 			cout << Temp->pPrev << tab << Temp << tab << Temp->Data << tab << Temp->pNext << endl;
 		cout << "Tail:" << Tail << endl;
-		cout << "Количество элементов списка: " << size;
+		cout << "РљРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ СЃРїРёСЃРєР°: " << size;
 		cout << delimeter << endl;
 	}
 	void reverse_print()const
@@ -342,21 +352,22 @@ public:
 		for (Element* Temp = Tail; Temp; Temp = Temp->pPrev)
 			cout << Temp->pPrev << tab << Temp << tab << Temp->Data << tab << Temp->pNext << endl;
 		cout << "Head: " << Head << endl;
-		cout << "Количество элементов списка: " << size << endl;
+		cout << "РљРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ СЃРїРёСЃРєР°: " << size << endl;
 		cout << delimeter << endl;
 	}
 };
 
-List operator+ (const List& left, const List& right)
+template <typename T>
+List<T> operator+ (const List<T>& left, const List<T>& right)
 {
-	List fusion = left;
-	for (List::ConstIterator it = right.begin(); it != right.end(); ++it)
+	List<T> fusion = left;
+	for (typename List<T>::ConstIterator it = right.begin(); it != right.end(); ++it)
 		fusion.push_back(*it);
 	return fusion;
 }
 
 //#define BASE_CHECK
-#define HOME_WORK
+//#define HOME_WORK
 
 void main()
 {
@@ -365,7 +376,7 @@ void main()
 #ifdef BASE_CHECK
 
 	int n;
-	cout << "Введите размер списка: "; cin >> n;
+	cout << "Р’РІРµРґРёС‚Рµ СЂР°Р·РјРµСЂ СЃРїРёСЃРєР°: "; cin >> n;
 	List list;
 	list.pop_front();
 	list.print();
@@ -384,8 +395,8 @@ void main()
 
 	int index;
 	int value;
-	cout << "Введите индекс добавляемого элемента: "; cin >> index;
-	cout << "Введите значение добавляемого элемента: "; cin >> value;
+	cout << "Р’РІРµРґРёС‚Рµ РёРЅРґРµРєСЃ РґРѕР±Р°РІР»СЏРµРјРѕРіРѕ СЌР»РµРјРµРЅС‚Р°: "; cin >> index;
+	cout << "Р’РІРµРґРёС‚Рµ Р·РЅР°С‡РµРЅРёРµ РґРѕР±Р°РІР»СЏРµРјРѕРіРѕ СЌР»РµРјРµРЅС‚Р°: "; cin >> value;
 	list.insert(value, index);
 	list.print();
 	list.reverse_print();
@@ -393,35 +404,46 @@ void main()
 #endif // BASE_CHECK
 
 #ifdef HOME_WORK
-	List list1 = { 3,5,8,13,21 };
-	List list2 = { 34,55,89 };
+	List<int> list1 = { 3,5,8,13,21 };
+	List<int> list2 = { 34,55,89 };
 
 	//list1.print();
 	//list2.print();
 
-	List list3 = list1 + list2;
+	List<int> list3 = list1 + list2;
 	for (int i : list1)cout << i << tab; cout << endl;
 	for (int i : list2)cout << i << tab; cout << endl;
 	for (int i : list3)cout << i << tab; cout << endl;
-	for (List::Iterator it = list1.begin(); it != list1.end(); ++it)
+	for (List<int>::Iterator it = list1.begin(); it != list1.end(); ++it)
 	{
 		cout << *it << tab;
 	}
 	cout << endl;
-	for (List::ReverseIterator it = list1.rbegin(); it != list1.rend(); ++it)
+	for (List<int>::ReverseIterator it = list1.rbegin(); it != list1.rend(); ++it)
 	{
 		cout << *it << tab;
 	}
 	cout << endl;
-	for (List::Iterator it = list1.begin(); it != list1.end(); ++it)
+	for (List<int>::Iterator it = list1.begin(); it != list1.end(); ++it)
 	{
 		*it *= 100;
 	}
-	for (List::ConstReverseIterator it = list1.rbegin(); it != list1.rend(); ++it)
+	for (List<int>::ConstReverseIterator it = list1.rbegin(); it != list1.rend(); ++it)
 	{
 		//*it *= 100;
 		cout << *it << tab;
 	}
 	cout << endl;
 #endif // HOME_WORK
+	
+/*
+РЁР°Р±Р»РѕРЅС‹ РєР»Р°СЃСЃРѕРІ:
+
+РЁР°Р±Р»РѕРЅРЅС‹Рј РЅР°Р·С‹РІР°РµС‚СЃСЏ РєР»Р°СЃСЃ, С‚РёРї РїРѕР»РµР№ РєРѕС‚РѕСЂРѕРіРѕ, РѕРїСЂРµРґРµР»СЏРµС‚СЃСЏ РїСЂРё СЃРѕР·РґР°РЅРёРё РѕР±СЉРµРєС‚Р°. РџСЂРё СЌС‚РѕРј РѕРЅ РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СѓРєР°Р·Р°РЅ РІ СѓРіР»РѕРІС‹С… СЃРєРѕР±РєР°С… РїРѕСЃР»Рµ РёРјРµРЅРё РєР»Р°СЃСЃР°.
+
+Р”Р»СЏ С‚РѕРіРѕ, С‡С‚РѕР±С‹ СЃРґРµР»Р°С‚СЊ РєР»Р°СЃСЃ С€Р°Р±Р»РѕРЅРЅС‹Рј, РїРµСЂРµРґ РЅРёРј РґРѕСЃС‚Р°С‚РѕС‡РЅРѕ СЃРѕР·РґСЂР°С‚СЊ С€Р°Р±Р»РѕРЅ. РўРµРїРµСЂСЊ Р°Р±СЃРѕР»СЋС‚РЅРѕ РІСЃРµ РїРµСЂРµРјРµРЅРЅС‹Рµ С‡Р»РµРЅС‹ РєР»Р°СЃСЃР° Рё РµРіРѕ РјРµС‚РѕРґС‹, Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё СЃС‚Р°РЅРѕРІСЏС‚СЃСЏ С€Р°Р±Р»РѕРЅРЅС‹РјРё. Р›СЋР±СѓСЋ РїРµСЂРµРјРµРЅРЅСѓСЋ РјРѕР¶РЅРѕ СЃРґРµР»Р°С‚СЊ С€Р°Р±Р»РѕРЅРЅРѕР№ РєР°Рє РІ РєР»Р°СЃСЃРµ, С‚Р°Рє Рё РІ РµРіРѕ РјРµС‚РѕРґР°С….
+Р•СЃР»Рј РІРЅСѓС‚СЂРё С€Р°Р±Р»РѕРЅРЅРѕРіРѕ РєР»Р°СЃСЃР° РѕР±СЉСЏРІР»РµРЅС‹ РґСЂСѓРіРёРµ РєР»Р°СЃСЃС‹, С‚Рѕ РѕРЅРё РЅРµ СЏРІР»СЏСЋС‚СЃСЏ С€Р°Р±Р»РѕРЅРЅС‹РјРё. РќРµСЃРјРѕС‚СЂСЏ РЅР° СЌС‚Рѕ, РёС… РїРѕР»СЏ РјРѕРіСѓС‚ Р±С‹С‚СЊ С€Р°Р±Р»РѕРЅРЅРѕРіРѕ С‚РёРїР°, Р° РјРµС‚РѕРґС‹ РјРѕРіСѓС‚ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ С€Р°Р±Р»РѕРЅРЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ.
+
+РљРѕРЅРєСЂРµС‚РЅС‹Р№ С‚РёРї РґР°РЅРЅС‹С… РІ СѓРіР»РѕРІС‹С… СЃРєРѕР±РєР°С… РїРѕСЃР»Рµ РёРјРµРЅРё РєР»Р°СЃСЃР° СЃС‚Р°РІРёС‚СЃСЏ С‚РѕР»СЊРєРѕ РІ С‚РѕРј СЃР»СѓС‡Р°Рµ, РµСЃР»Рё РёРјСЏ РєР»Р°СЃСЃР° РѕР·РЅР°С‡Р°РµС‚ РёРјСЏ С‚РёРїР°, Р° РЅРµ РёРјСЏ С„СѓРЅРєС†РёРё.
+*/
 }
