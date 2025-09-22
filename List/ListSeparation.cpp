@@ -70,15 +70,6 @@ template<typename T>T& List<T>::ReverseIterator::operator*()
 	return ConstBaseIterator::Temp->Data;
 }
 
-
-///////							Iterators									////////
-////////////////////////////////////////////////////////////////////////////////////
-
-///------------------------------------------------------------------------------///
-
-////////////////////////////////////////////////////////////////////////////////////
-///////						List member-functions							////////
-
 template<typename T>typename List<T>::ConstIterator List<T>::begin()const
 {
 	return Head;
