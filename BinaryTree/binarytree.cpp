@@ -52,6 +52,7 @@ public:
 	}
 	~Tree()
 	{
+		clear();
 		cout << "TDestructor:\t" << this << endl;
 	}
 	void balance()
@@ -157,7 +158,7 @@ private:
 		else
 		{
 			if (Root->pRight == nullptr)Root->pRight = new Element(Data);
-			else insert(Data, Root->pLeft);
+			else insert(Data, Root->pRight);
 		}
 	}
 	void erase(int Data, Element*& Root)
@@ -217,8 +218,6 @@ private:
 	{
 		if (Root == nullptr)
 		{
-			//cout.width(width/2);
-			//cout << "";
 			return;
 		}
 		if (depth == 0)
@@ -283,7 +282,8 @@ template<typename T>void measure_performance(const char message[], T(Tree::* fun
 
 //#define BASE_CHECK
 //#define ERASE_CHECK
-#define PERFORMANCE_CHECK
+#define DEPTH_CHECK
+//#define PERFORMANCE_CHECK
 
 void main()
 {
@@ -341,7 +341,27 @@ void main()
 	tree.print();
 	cout << "Глубина дерева: " << tree.depth() << endl;
 #endif // ERASE_CHECK
+#ifdef DEPTH_CHECK
+	Tree tree =
+	{
+					50,
 
+			25,				75,
+
+		16,		32,		58,		85
+		,8
+	};
+	tree.print();
+	cout << "Глубина дерева: " << tree.depth() << endl;
+	//tree.depth_print(3);
+	tree.tree_print();
+
+	Tree tree2 = { 55, 34, 21, 13, 8, 5, 3 };
+	tree2.tree_print();
+	tree2.balance();
+	cout << "\n------------------------------------\n";
+	tree2.tree_print();
+#endif // DEPTH_CHECK
 #ifdef PERFORMANCE_CHECK
 	int n;
 	cout << "Введите количество элементов: "; cin >> n;
